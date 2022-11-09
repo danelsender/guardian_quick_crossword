@@ -6,13 +6,14 @@ import numpy as np
 import random
 from PIL import ImageTk, Image
 from os.path import dirname,abspath
-from os import chdir,getcwd
+from os import chdir
 
-def open_crossword(clist,ctype):
+def open_crossword(clist,ctype,current_list,t):
     # compare today with last time a crossword was opened
-    global current
-    oldcurrent = current
-    current = get_today()
+    oldcurrent = current_list[0]
+    current = get_today(t)
+    # change current_list by reference so value changes in main
+    current_list[0] = current
     # if new day
     if (current != oldcurrent):
         # append new days to list
@@ -63,12 +64,10 @@ def all_messages(message):
 # calculate what todays quick crossword number will be
 # 16381 is todays crossword, at time of writing (2022-11-07)
 # append to list
-def get_today():
-    global t
+def get_today(t):
     d1 = date.today().strftime('%Y-%m-%d')
     diff = np.busday_count('2022-11-07',d1,weekmask=[1,1,1,1,1,1,0],holidays=t)
-    today_num = 16381 + diff
-    return today_num
+    return 16381 + diff
 
 # begin program    
 speedies = []
@@ -77,7 +76,6 @@ quiptics = []
 
 # set working directory to the directory that contains this file
 chdir(dirname(abspath(__file__)))
-print(getcwd())
 with open("numbers_with_type.txt") as f:
     print("reading completed crosswords file")
     while (True):
@@ -100,7 +98,7 @@ t = []
 for i in range(2022+1,2032+1):
     t.append("{}-12-25".format(i))
 
-current = get_today()
+current = get_today(t)
 quicks_sorted = sorted(quicks)
 allquicks = np.arange(9100,current+1,1).tolist()
 allquicks = [str(x) for x in allquicks]
@@ -117,9 +115,12 @@ root = Tk()
 # Open window having dimension 100x100
 root.geometry('120x120')
 
+#current in list for pass by reference
+current_list = [current]
+
 # Create buttons
 image = ImageTk.PhotoImage(Image.open("button_image.png"))  # PIL solution
-btn1 = Button(root, image = image, bd = '5', cursor='pirate', command = lambda : open_crossword(quicksnotdone,'quick'))
+btn1 = Button(root, image = image, bd = '5', cursor='pirate', command = lambda : open_crossword(quicksnotdone,'quick',current_list,t))
 #btn2 = Button(root, text = 'Todays', bd = '5', command = lambda : open_crossword(quicksnotdone,'quick'))
 #btn3 = Button(root, text = 'Quiptic', bd = '5' ,command = lambda : open_crossword(quiptics,'quiptic'))
 
