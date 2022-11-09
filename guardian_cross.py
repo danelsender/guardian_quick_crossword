@@ -5,6 +5,8 @@ import re
 import numpy as np
 import random
 from PIL import ImageTk, Image
+from os.path import dirname,abspath
+from os import chdir,getcwd
 
 def open_crossword(clist,ctype):
     # compare today with last time a crossword was opened
@@ -72,7 +74,10 @@ def get_today():
 speedies = []
 quicks = []
 quiptics = []
-    
+
+# set working directory to the directory that contains this file
+chdir(dirname(abspath(__file__)))
+print(getcwd())
 with open("numbers_with_type.txt") as f:
     print("reading completed crosswords file")
     while (True):
@@ -113,7 +118,7 @@ root = Tk()
 root.geometry('120x120')
 
 # Create buttons
-image = ImageTk.PhotoImage(Image.open("image.png"))  # PIL solution
+image = ImageTk.PhotoImage(Image.open("button_image.png"))  # PIL solution
 btn1 = Button(root, image = image, bd = '5', cursor='pirate', command = lambda : open_crossword(quicksnotdone,'quick'))
 #btn2 = Button(root, text = 'Todays', bd = '5', command = lambda : open_crossword(quicksnotdone,'quick'))
 #btn3 = Button(root, text = 'Quiptic', bd = '5' ,command = lambda : open_crossword(quiptics,'quiptic'))
