@@ -27,8 +27,10 @@ def open_crossword(clist,ctype,current_list,t):
         if (datetime.today().weekday() == 0):
             satcross = str(int(nextcross) - 1)
             webbrowser.open('https://www.theguardian.com/crosswords/'+ctype+"/"+satcross)
-            string = "Hooray it's Monday, opened Saturday's as well"
-            all_messages(string)
+            monday_message = "Hooray it's Monday, opened Saturday's as well"
+            monday_title = 'Mondays Rock'
+            monday_time = 5 # time in seconds
+            timed_message(monday_message,monday_title,monday_time)
             update_lists(clist,satcross,ctype)
     # if second or higher crossword today
     else:
@@ -44,7 +46,7 @@ def update_lists(clist,nextcross,ctype):
         f.write(nextcross+" "+ctype+"\n")
 
 # this would be improved by passing the message content and duration as arguments        
-def all_messages(message):
+def timed_message(message,title,time):
     message = Tk()
     ws = message.winfo_screenwidth() # width of the screen
     hs = message.winfo_screenheight() # height of the screen
@@ -54,12 +56,10 @@ def all_messages(message):
     y = (hs/2) - (h/2)
     message.wm_attributes("-topmost", 1)
     message.geometry('%dx%d+%d+%d' % (w, h, x, y))
-    #btn = Button(message, text = 'Close', bd = '5',command = message.destroy)
-    #btn.pack(side = 'bottom')  
-    message.title('Mondays Rock')
+    message.title(title)
     label = Label(message, text = message,font=("System",40))
     label.pack(ipadx=10, ipady=10)
-    message.after(3000, lambda: message.destroy()) # Destroy after 3 seconds
+    message.after(time*1000, lambda: message.destroy()) # Destroy after 3 seconds
 
 # calculate what todays quick crossword number will be
 # 16381 is todays crossword, at time of writing (2022-11-07)
