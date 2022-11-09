@@ -4,6 +4,7 @@ import webbrowser
 import re
 import numpy as np
 import random
+from PIL import ImageTk, Image
 
 def open_crossword(clist,ctype):
     # compare today with last time a crossword was opened
@@ -23,7 +24,8 @@ def open_crossword(clist,ctype):
         if (datetime.today().weekday() == 0):
             satcross = str(int(nextcross) - 1)
             webbrowser.open('https://www.theguardian.com/crosswords/'+ctype+"/"+satcross)
-            monday_message()
+            string = "Hooray it's Monday, opened Saturday's as well"
+            all_messages(string)
             update_lists(clist,satcross,ctype)
     # if second or higher crossword today
     else:
@@ -35,11 +37,11 @@ def update_lists(clist,nextcross,ctype):
     # remove from list of available crosswords
     clist.remove(nextcross)
     # add to file list of completed crosswords
-    with open("/Users/delsender/Documents/phd/codes/crosswords/final_mk2/source/numbers_with_type.txt","a") as f:
+    with open("numbers_with_type.txt","a") as f:
         f.write(nextcross+" "+ctype+"\n")
 
 # this would be improved by passing the message content and duration as arguments        
-def monday_message():
+def all_messages(message):
     message = Tk()
     ws = message.winfo_screenwidth() # width of the screen
     hs = message.winfo_screenheight() # height of the screen
@@ -49,10 +51,10 @@ def monday_message():
     y = (hs/2) - (h/2)
     message.wm_attributes("-topmost", 1)
     message.geometry('%dx%d+%d+%d' % (w, h, x, y))
-    btn = Button(message, text = 'Close', bd = '5',command = message.destroy)
-    btn.pack(side = 'bottom')  
+    #btn = Button(message, text = 'Close', bd = '5',command = message.destroy)
+    #btn.pack(side = 'bottom')  
     message.title('Mondays Rock')
-    label = Label(message, text = "Hooray it's Monday, opened Saturday's as well",font=("System",40))
+    label = Label(message, text = message,font=("System",40))
     label.pack(ipadx=10, ipady=10)
     message.after(3000, lambda: message.destroy()) # Destroy after 3 seconds
 
@@ -71,7 +73,8 @@ speedies = []
 quicks = []
 quiptics = []
     
-with open("/Users/delsender/Documents/phd/codes/crosswords/final_mk2/source/numbers_with_type.txt") as f:
+with open("numbers_with_type.txt") as f:
+    print("reading completed crosswords file")
     while (True):
         line = f.readline().split()
         if (len(line) < 2):
@@ -93,7 +96,6 @@ for i in range(2022+1,2032+1):
     t.append("{}-12-25".format(i))
 
 current = get_today()
-print(current)
 quicks_sorted = np.sort(quicks)
 quicksnotdone = np.arange(9100,current+1,1).tolist()
 
@@ -110,16 +112,17 @@ quicksnotdone = [str(x) for x in quicksnotdone]
 root = Tk()
 
 # Open window having dimension 100x100
-root.geometry('100x100')
+root.geometry('120x120')
 
 # Create buttons
-btn1 = Button(root, text = 'Quick', bd = '5', command = lambda : open_crossword(quicksnotdone,'quick'))
+image = ImageTk.PhotoImage(Image.open("image.png"))  # PIL solution
+btn1 = Button(root, image = image, bd = '5', cursor='pirate', command = lambda : open_crossword(quicksnotdone,'quick'))
 #btn2 = Button(root, text = 'Todays', bd = '5', command = lambda : open_crossword(quicksnotdone,'quick'))
 #btn3 = Button(root, text = 'Quiptic', bd = '5' ,command = lambda : open_crossword(quiptics,'quiptic'))
 
 # Label tkinter window
-label = Label(root, text = 'Crosswords')
-label.pack(ipadx=10, ipady=10)
+#label = Label(root, text = 'Crosswords')
+#label.pack(ipadx=10, ipady=10)
 
 # Organise buttons from the bottom up 
 btn1.pack(side = 'bottom')   
@@ -129,4 +132,5 @@ btn1.pack(side = 'bottom')
 # keep tkinter window on top of other windows
 root.wm_attributes("-topmost", 1)
 
+root.title('4pm')
 root.mainloop()
