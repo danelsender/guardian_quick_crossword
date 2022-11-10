@@ -95,7 +95,7 @@ with open("numbers_with_type.txt") as f:
 # t deals with christmas day
 # will there be an issue if christmass day is on Saturday?
 t = []
-for i in range(2022+1,2032+1):
+for i in range(2022,2032+1):
     t.append("{}-12-25".format(i))
 
 current = get_today(t)
