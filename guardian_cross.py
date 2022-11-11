@@ -109,8 +109,6 @@ for i in quicks_sorted:
     except ValueError:
         pass
 
-print(quicksnotdone)
-
 # create a tkinter window
 root = Tk()
 
