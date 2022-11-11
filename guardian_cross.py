@@ -100,14 +100,16 @@ for i in range(2022,2032+1):
 
 current = get_today(t)
 quicks_sorted = sorted(quicks)
-allquicks = np.arange(9100,current+1,1).tolist()
-allquicks = [str(x) for x in allquicks]
-
-quicks_set = set(quicks_sorted)
-allquicks_set = set(allquicks)
-
-quicksnotdone = sorted(allquicks_set.difference(quicks_set))
+quicksnotdone = np.arange(9100,current+1,1).tolist()
 quicksnotdone = [str(x) for x in quicksnotdone]
+
+for i in quicks_sorted:
+    try:
+        quicksnotdone.remove(i)
+    except ValueError:
+        pass
+
+print(quicksnotdone)
 
 # create a tkinter window
 root = Tk()
