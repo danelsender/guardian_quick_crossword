@@ -8,7 +8,7 @@ from PIL import ImageTk, Image
 from os.path import dirname,abspath
 from os import chdir
 
-def open_crossword(clist,ctype,current_list,t):
+def open_crossword(clist,plist,ctype,current_list,t):
     # compare today with last time a crossword was opened
     oldcurrent = current_list[0]
     current = get_today(t)
@@ -27,11 +27,22 @@ def open_crossword(clist,ctype,current_list,t):
         if (datetime.today().weekday() == 0):
             satcross = str(int(nextcross) - 1)
             webbrowser.open('https://www.theguardian.com/crosswords/'+ctype+"/"+satcross)
-            monday_message = "Hooray it's Monday, opened Saturday's as well"
+            monday_message = "Hooray it's Monday, opened Saturday's crossword as well"
             monday_title = 'Mondays Rock'
-            monday_time = 5 # time in seconds
+            monday_time = 8 # time in seconds
             timed_message(monday_message,monday_title,monday_time)
             update_lists(clist,satcross,ctype)
+    # open a partially completed crossword 1 in 200 times
+    elif (random.random() < 1./200.):
+        nextcross = plist[-1]
+        webbrowser.open('https://www.theguardian.com/crosswords/'+ctype+"/"+satcross)
+        partial_message = "Congratulations, you have been selected to fix someone elses mess"
+        partial_title = 'Incomplete crossword'
+        partial_time = 8
+        timed_message(partial_message,partial_title,partial_time)
+        plist.remove(nextcross)
+        with open('partial.txt','w') as f_p:
+            f_p.writelines(plist)
     # if second or higher crossword today
     else:
         nextcross = random.choice(tuple(clist))
@@ -42,22 +53,22 @@ def update_lists(clist,nextcross,ctype):
     # remove from list of available crosswords
     clist.remove(nextcross)
     # add to file list of completed crosswords
-    with open("numbers_with_type.txt","a") as f:
+    with open("complete.txt","a") as f:
         f.write(nextcross+" "+ctype+"\n")
 
 # this would be improved by passing the message content and duration as arguments        
-def timed_message(message,title,time):
+def timed_message(text,title,time):
     message = Tk()
     ws = message.winfo_screenwidth() # width of the screen
     hs = message.winfo_screenheight() # height of the screen
-    w = 1000
+    w = 1300
     h = 100
     x = (ws/2) - (w/2)
     y = (hs/2) - (h/2)
     message.wm_attributes("-topmost", 1)
     message.geometry('%dx%d+%d+%d' % (w, h, x, y))
     message.title(title)
-    label = Label(message, text = message,font=("System",40))
+    label = Label(message, text = text,font=("System",40))
     label.pack(ipadx=10, ipady=10)
     message.after(time*1000, lambda: message.destroy()) # Destroy after 3 seconds
 
@@ -69,28 +80,15 @@ def get_today(t):
     diff = np.busday_count('2022-11-07',d1,weekmask=[1,1,1,1,1,1,0],holidays=t)
     return 16381 + diff
 
-# begin program    
-speedies = []
-quicks = []
-quiptics = []
-
 # set working directory to the directory that contains this file
 chdir(dirname(abspath(__file__)))
-with open("numbers_with_type.txt") as f:
-    print("reading completed crosswords file")
-    while (True):
-        line = f.readline().split()
-        if (len(line) < 2):
-            print('end of file')
-            break
-        if (line[1] == 'quick'):
-            quicks.append(line[0])
-        elif (line[1] == 'speedy'):
-            speedies.append(line[0])
-        elif (line[1] == 'quiptic'):
-            quiptics.append(line[0])
-        else:
-            print("unknown crossword type",line[1])
+
+print('reading attempted crossword files')
+with open("complete.txt") as f_c:
+    quicks = f_c.read().splitlines()
+with open("partial.txt") as f_p:
+    partials = f_p.read().splitlines()
+print('end of file reading')
 
 # t deals with christmas day
 # will there be an issue if christmass day is on Saturday?
@@ -120,7 +118,7 @@ current_list = [current]
 
 # Create buttons
 image = ImageTk.PhotoImage(Image.open("button_image.png"))  # PIL solution
-btn1 = Button(root, image = image, bd = '5', cursor='pirate', command = lambda : open_crossword(quicksnotdone,'quick',current_list,t))
+btn1 = Button(root, image = image, bd = '5', cursor='pirate', command = lambda : open_crossword(quicksnotdone,partials,'quick',current_list,t))
 #btn2 = Button(root, text = 'Todays', bd = '5', command = lambda : open_crossword(quicksnotdone,'quick'))
 #btn3 = Button(root, text = 'Quiptic', bd = '5' ,command = lambda : open_crossword(quiptics,'quiptic'))
 
