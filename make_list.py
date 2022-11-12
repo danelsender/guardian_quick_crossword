@@ -1,5 +1,3 @@
-import random
-
 with open ('the_list.txt',encoding='latin-1') as f_in:
     completed = f_in.readlines()
 
