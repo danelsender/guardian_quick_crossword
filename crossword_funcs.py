@@ -29,7 +29,7 @@ def open_crossword(clist,plist,current_list,t):
             timed_message(monday_message,monday_title,monday_time)
             update_lists(clist,satcross)
     # open a partially completed crossword 1 in 200 times
-    elif (random.random() < 1./200):
+    elif (random.random() < 1./100.):
         nextcross = plist[-1]
         webbrowser.open('https://www.theguardian.com/crosswords/quick/'+nextcross)
         partial_message = "Congratulations, you have been selected to fix someone elses mess"
