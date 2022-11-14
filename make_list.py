@@ -8,8 +8,7 @@ for i,line in enumerate(completed):
         useful_stuff = line.split()[0]
         num_type = useful_stuff.split("/")
         if (len(num_type) == 3):
-            if (line.count('""""') > 75):
+            if (line.count('""""') > 100):
                 f_p.write (num_type[2]+"\n")
-            else:
-                f_c.write (num_type[2]+"\n")
+            f_c.write (num_type[2]+"\n")
 
